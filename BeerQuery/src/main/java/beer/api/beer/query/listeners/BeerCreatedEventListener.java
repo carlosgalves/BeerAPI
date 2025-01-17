@@ -34,7 +34,13 @@ public class BeerCreatedEventListener {
                     event.getImage(),
                     event.getDescription(),
                     event.getAbv(),
-                    event.getCountryIso()
+                    event.getCountryIso(),
+                    event.getEan(),
+                    event.getTags(),
+                    event.getOverallRating(),
+                    event.getAromaRating(),
+                    event.getTasteRating(),
+                    event.getAfterTasteRating()
             );
 
             beerRepository.save(beer);

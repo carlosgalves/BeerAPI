@@ -25,18 +25,41 @@ public class BeerCommandServiceImplementation implements BeerCommandService {
 
     @Override
     public void createBeer(CreateBeerRequest request) {
-        Beer beer = new Beer(
-                request.getId(), request.getName(), request.getBrewery(), request.getType(),
-                request.getImage(), request.getDescription(), request.getAbv(), request.getCountryIso()
-        );
+        Beer beer = new Beer();
+        beer.setName(request.getName());
+        beer.setBrewery(request.getBrewery());
+        beer.setType(request.getType());
+        beer.setImage(request.getImage());
+        beer.setDescription(request.getDescription());
+        beer.setAbv(request.getAbv());
+        beer.setCountryIso(request.getCountryIso());
+        beer.setEan(request.getEan());
+        beer.setTags(request.getTags());
+        beer.setOverallRating(request.getOverallRating());
+        beer.setAromaRating(request.getAromaRating());
+        beer.setTasteRating(request.getTasteRating());
+        beer.setAfterTasteRating(request.getAfterTasteRating());
 
         beerRepository.save(beer);
         log.info("Beer created: {}", beer);
 
         BeerCreatedEvent event = new BeerCreatedEvent(
-                beer.getId(), beer.getName(), beer.getBrewery(), beer.getType(), beer.getImage(),
-                beer.getDescription(), beer.getAbv(), beer.getCountryIso()
+                beer.getId().toString(),
+                beer.getName(),
+                beer.getBrewery(),
+                beer.getType(),
+                beer.getImage(),
+                beer.getDescription(),
+                beer.getAbv(),
+                beer.getCountryIso(),
+                beer.getEan(),
+                beer.getTags(),
+                beer.getOverallRating(),
+                beer.getAromaRating(),
+                beer.getTasteRating(),
+                beer.getAfterTasteRating()
         );
+
         kafkaTemplate.send("beer-topic", event);
     }
 }

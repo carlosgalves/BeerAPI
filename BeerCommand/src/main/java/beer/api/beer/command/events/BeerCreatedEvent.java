@@ -4,6 +4,8 @@ package beer.api.beer.command.events;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 public class BeerCreatedEvent {
@@ -15,4 +17,10 @@ public class BeerCreatedEvent {
     private String description;
     private float abv;
     private String countryIso;
+    private String ean;
+    private List<String> tags;
+    private float overallRating;
+    private float aromaRating;
+    private float tasteRating;
+    private float afterTasteRating;
 }
