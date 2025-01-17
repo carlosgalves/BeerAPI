@@ -40,9 +40,7 @@ public class KafkaConsumerConfig {
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
-        props.put(JsonDeserializer.TYPE_MAPPINGS, "beer:beer.api.beer.query.events.BeerCreatedEvent");
-        props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "beer.api.beer.query.events.BeerCreatedEvent");
+        props.put(JsonDeserializer.TYPE_MAPPINGS, typeMappings);
 
         return props;
     }
