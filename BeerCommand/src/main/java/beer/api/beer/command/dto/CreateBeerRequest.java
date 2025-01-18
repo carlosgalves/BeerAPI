@@ -42,24 +42,4 @@ public class CreateBeerRequest {
     @Column(nullable = false, unique = true)
     @NotBlank(message = "EAN cannot be blank")
     private String ean;
-
-    @Column(nullable = false)
-    @Min(value = 0, message = "Rating cannot be lower than 0")
-    @Max(value = 5, message = "Rating cannot be greater than 5")
-    private float overallRating;
-
-    @Column(nullable = false)
-    @Min(value = 0, message = "Rating cannot be lower than 0")
-    @Max(value = 5, message = "Rating cannot be greater than 5")
-    private float aromaRating;
-
-    @Column(nullable = false)
-    @Min(value = 0, message = "Rating cannot be lower than 0")
-    @Max(value = 5, message = "Rating cannot be greater than 5")
-    private float tasteRating;
-
-    @Column(nullable = false)
-    @Min(value = 0, message = "Rating cannot be lower than 0")
-    @Max(value = 5, message = "Rating cannot be greater than 5")
-    private float afterTasteRating;
 }

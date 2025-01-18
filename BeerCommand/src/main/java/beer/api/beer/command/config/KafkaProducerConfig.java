@@ -30,18 +30,18 @@ public class KafkaProducerConfig {
         configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         configs.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configs.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        configs.put(JsonSerializer.TYPE_MAPPINGS, typeMappings);
+        //configs.put(JsonSerializer.TYPE_MAPPINGS, typeMappings);
 
         return configs;
     }
 
     @Bean
-    public ProducerFactory<String, BeerCreatedEvent> producerFactory() {
+    public ProducerFactory<String, Object> producerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfig());
     }
 
     @Bean
-    public KafkaTemplate<String, BeerCreatedEvent> kafkaTemplate(ProducerFactory<String, BeerCreatedEvent> producerFactory) {
+    public KafkaTemplate<String, Object> kafkaTemplate(ProducerFactory<String, Object> producerFactory) {
          return new KafkaTemplate<>(producerFactory);
     }
 }

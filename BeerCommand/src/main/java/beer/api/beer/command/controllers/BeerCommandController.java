@@ -6,11 +6,10 @@ import beer.api.beer.command.services.BeerCommandService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 @RestController
@@ -28,6 +27,17 @@ public class BeerCommandController {
     public ResponseEntity<?> createBeer(@RequestBody CreateBeerRequest request) throws ExecutionException, InterruptedException {
         beerCommandService.createBeer(request);
         return ResponseEntity.status(HttpStatus.CREATED).body("Beer created successfully!");
+    }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> patchBeer(@PathVariable("id") UUID id, @RequestBody Map<String, Object> updates) throws ExecutionException, InterruptedException {
+        beerCommandService.patchBeer(id, updates);
+        return ResponseEntity.status(HttpStatus.OK).body("Beer updated successfully with partial data!");
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteBeer(@PathVariable("id") UUID id) throws ExecutionException, InterruptedException {
+        beerCommandService.deleteBeer(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Beer deleted successfully!");
     }
 }

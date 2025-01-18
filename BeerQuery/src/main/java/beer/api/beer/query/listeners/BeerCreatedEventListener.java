@@ -24,7 +24,7 @@ public class BeerCreatedEventListener {
     public void handleBeerCreatedEvent(BeerCreatedEvent event) {
 
         try {
-            log.info("Received beer event: {}", event);
+            log.info("Received event: {}", event);
 
             Beer beer = new Beer(
                     event.getId(),
