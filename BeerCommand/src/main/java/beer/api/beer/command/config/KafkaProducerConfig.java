@@ -21,8 +21,8 @@ public class KafkaProducerConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
-    @Value("${spring.kafka.type-mappings}")
-    private String typeMappings;
+    /*@Value("${spring.kafka.type-mappings}")
+    private String typeMappings;*/
 
     @Bean
     public Map<String, Object> producerConfig() {

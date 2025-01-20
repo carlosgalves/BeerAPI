@@ -26,8 +26,8 @@ public class KafkaConsumerConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
-    @Value("${spring.kafka.type-mappings}")
-    private String typeMappings;
+    /*@Value("${spring.kafka.type-mappings}")
+    private String typeMappings;*/
 
     @Value("${spring.kafka.consumer.group-id}")
     private String groupId;
@@ -40,7 +40,7 @@ public class KafkaConsumerConfig {
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        props.put(JsonDeserializer.TYPE_MAPPINGS, typeMappings);
+        //props.put(JsonDeserializer.TYPE_MAPPINGS, typeMappings);
 
         return props;
     }
