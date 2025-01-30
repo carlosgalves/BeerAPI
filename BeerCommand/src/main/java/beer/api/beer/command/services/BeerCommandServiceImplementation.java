@@ -72,51 +72,6 @@ public class BeerCommandServiceImplementation implements BeerCommandService {
     }
 
     @Override
-    public void createMultipleBeer(List<CreateBeerRequest> request) {
-        List<Beer> beers = request.stream().map(item -> { Beer beer = new Beer();
-            beer.setName(item.getName());
-            beer.setBrewery(item.getBrewery());
-            beer.setType(item.getType());
-            beer.setImage(item.getImage());
-            beer.setDescription(item.getDescription());
-            beer.setAbv(item.getAbv());
-            beer.setCountryIso(item.getCountryIso());
-            beer.setEan(item.getEan());
-            beer.setTags(item.getTags());
-            beer.setOverallRating(0f);
-            beer.setAromaRating(0f);
-            beer.setTasteRating(0f);
-            beer.setAfterTasteRating(0f);
-            return beer;
-        }).toList();
-
-        beerRepository.saveAll(beers);
-        log.info("Beers created: {}", beers);
-
-        beers.forEach(beer -> {
-            BeerCreatedEvent event = new BeerCreatedEvent(
-                    beer.getId().toString(),
-                    beer.getName(),
-                    beer.getBrewery(),
-                    beer.getType(),
-                    beer.getImage(),
-                    beer.getDescription(),
-                    beer.getAbv(),
-                    beer.getCountryIso(),
-                    beer.getEan(),
-                    beer.getTags(),
-                    0f,
-                    0f,
-                    0f,
-                    0f
-            );
-
-            kafkaTemplate.send("beer-topic", event);
-            log.info("Sent event: {}", event);
-        });
-    }
-
-    @Override
     public void patchBeer(UUID id, Map<String, Object> updates) {
         Beer beer = beerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Beer not found"));

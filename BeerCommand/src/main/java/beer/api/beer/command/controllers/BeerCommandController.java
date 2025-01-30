@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -27,12 +26,6 @@ public class BeerCommandController {
     @PostMapping
     public ResponseEntity<?> createBeer(@RequestBody CreateBeerRequest request) throws RuntimeException {
         beerCommandService.createBeer(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Beer created successfully!");
-    }
-
-    @PostMapping("/batch")
-    public ResponseEntity<?> createMultipleBeer(@RequestBody List<CreateBeerRequest> request) throws RuntimeException {
-        beerCommandService.createMultipleBeer(request);
         return ResponseEntity.status(HttpStatus.CREATED).body("Beer created successfully!");
     }
 
