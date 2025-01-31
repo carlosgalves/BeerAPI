@@ -9,6 +9,7 @@ import beer.api.beer.command.model.Beer;
 import beer.api.beer.command.repositories.BeerRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,15 @@ public class BeerCommandServiceImplementation implements BeerCommandService {
         this.beerRepository = beerRepository;
         this.kafkaTemplate = kafkaTemplate;
     }
+
+    @Value("${spring.kafka.event.key.beer.created}")
+    private String BEER_CREATED_KEY;
+
+    @Value("${spring.kafka.event.key.beer.updated}")
+    private String BEER_UPDATED_KEY;
+
+    @Value("${spring.kafka.event.key.beer.deleted}")
+    private String BEER_DELETED_KEY;
 
     @Override
     public void createBeer(CreateBeerRequest request) {
@@ -67,7 +77,7 @@ public class BeerCommandServiceImplementation implements BeerCommandService {
             0f
         );
 
-        kafkaTemplate.send("beer-topic", event);
+        kafkaTemplate.send("beer-topic", BEER_CREATED_KEY, event);
         log.info("Sent event: {}", event);
     }
 
@@ -135,7 +145,7 @@ public class BeerCommandServiceImplementation implements BeerCommandService {
 
         BeerUpdatedEvent event = eventBuilder.build();
 
-        kafkaTemplate.send("beer-topic", event);
+        kafkaTemplate.send("beer-topic", BEER_UPDATED_KEY, event);
         log.info("Sent event: {}", event);
     }
 
@@ -149,7 +159,7 @@ public class BeerCommandServiceImplementation implements BeerCommandService {
 
         BeerDeletedEvent event = new BeerDeletedEvent(id);
 
-        kafkaTemplate.send("beer-topic", event);
+        kafkaTemplate.send("beer-topic", BEER_DELETED_KEY, event);
         log.info("Sent event: {}", event);
     }
 }

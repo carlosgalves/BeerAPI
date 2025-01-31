@@ -21,8 +21,8 @@ public class KafkaProducerConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
-    /*@Value("${spring.kafka.type-mappings}")
-    private String typeMappings;*/
+    @Value("${spring.kafka.type-mappings}")
+    private String typeMappings;
 
     @Bean
     public Map<String, Object> producerConfig() {
@@ -30,7 +30,7 @@ public class KafkaProducerConfig {
         configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         configs.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configs.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        //configs.put(JsonSerializer.TYPE_MAPPINGS, typeMappings);
+        configs.put(JsonSerializer.TYPE_MAPPINGS, typeMappings);
 
         return configs;
     }

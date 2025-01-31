@@ -5,7 +5,10 @@ import beer.api.beer.query.model.Beer;
 import beer.api.beer.query.repositories.BeerRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -21,11 +24,18 @@ public class BeerUpdatedEventListener {
         this.beerRepository = beerRepository;
     }
 
+    @Value("${spring.kafka.event.key.beer.updated}")
+    private String BEER_UPDATED_KEY;
 
-    @KafkaListener(topics = "beer-topic", groupId = "beer-consumers", containerFactory = "kafkaListenerContainerFactory")
-    public void handleBeerUpdatedEvent(BeerUpdatedEvent event) {
+    @KafkaListener(topics = "beer-topic", groupId = "beer-consumers", containerFactory = "beerUpdatedListenerFactory")
+    public void handleBeerUpdatedEvent(BeerUpdatedEvent event, @Header(KafkaHeaders.RECEIVED_KEY) String key) {
 
         try {
+            if (!BEER_UPDATED_KEY.equals(key)) {
+                log.warn("Received event with unexpected key: {}", key);
+                return;
+            }
+
             log.info("Received event: {}", event);
 
             Beer beer = beerRepository.findById(event.getId())
