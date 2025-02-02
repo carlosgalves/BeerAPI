@@ -1,8 +1,9 @@
-package beer.api.beer.command.controller;
+package beer.api.beer.command;
 
 
 import beer.api.beer.command.controllers.BeerCommandController;
 import beer.api.beer.command.dto.CreateBeerRequest;
+import beer.api.beer.command.exceptions.BeerNotFoundException;
 import beer.api.beer.command.exceptions.DuplicateEanException;
 import beer.api.beer.command.services.BeerCommandService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,6 +18,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
+import java.util.Map;
+import java.util.UUID;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -24,10 +27,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 
 
 @WebMvcTest(BeerCommandController.class)
-public class CreateBeerTests {
+public class BeerCommandControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -42,6 +47,8 @@ public class CreateBeerTests {
 
     private final String BEER_ENDPOINT = "/beers";
 
+    private UUID beerId;
+
 
     @BeforeEach
     void setUp() {
@@ -55,6 +62,8 @@ public class CreateBeerTests {
         createBeerRequest.setCountryIso("xx");
         createBeerRequest.setTags(Collections.singletonList(""));
         createBeerRequest.setEan("0123456789");
+
+        beerId = UUID.randomUUID();
     }
 
     @Test
@@ -216,6 +225,61 @@ public class CreateBeerTests {
                 .andExpect(jsonPath("$.errors.ean").value("EAN already exists"));
 
         verify(beerCommandService, times(1)).createBeer(any(CreateBeerRequest.class));
+    }
+
+    @Test
+    void updateBeer_Success() throws Exception {
+        Map<String, Object> updates = Map.of(
+                "name", "Updated IPA",
+                "abv", 5.5
+        );
+
+        doNothing().when(beerCommandService).patchBeer(any(UUID.class), eq(updates));
+
+        mockMvc.perform(patch("/beers/{id}", beerId)
+                        .contentType("application/json")
+                        .content("{\"name\":\"Updated IPA\", \"abv\": 5.5}"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Beer updated successfully!"));
+
+        verify(beerCommandService, times(1)).patchBeer(eq(beerId), eq(updates));
+    }
+
+    @Test
+    void updateBeer_NotFound() throws Exception {
+        doThrow(new BeerNotFoundException(beerId)).when(beerCommandService).patchBeer(eq(beerId), any(Map.class));
+
+        mockMvc.perform(patch("/beers/{id}", beerId)
+                        .contentType("application/json")
+                        .content("{\"name\":\"Non-existent IPA\", \"abv\": 6.0}"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Couldn't find beer with ID: " + beerId));
+
+        verify(beerCommandService, times(1)).patchBeer(eq(beerId), any(Map.class));
+    }
+
+    // TODO: test updating with invalid parameters
+
+    @Test
+    void deleteBeer_Success() throws Exception {
+        doNothing().when(beerCommandService).deleteBeer(eq(beerId));
+
+        mockMvc.perform(delete("/beers/{id}", beerId))
+                .andExpect(status().isNoContent())
+                .andExpect(content().string("Beer deleted successfully!"));
+
+        verify(beerCommandService, times(1)).deleteBeer(eq(beerId));
+    }
+
+    @Test
+    void deleteBeer_NotFound() throws Exception {
+        doThrow(new BeerNotFoundException(beerId)).when(beerCommandService).deleteBeer(eq(beerId));
+
+        mockMvc.perform(delete("/beers/{id}", beerId))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Couldn't find beer with ID: " + beerId));
+
+        verify(beerCommandService, times(1)).deleteBeer(eq(beerId));
     }
 
 }

@@ -28,6 +28,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(response);
     }
 
+    @ExceptionHandler(BeerNotFoundException.class)
+    public ResponseEntity<String> handleBeerNotFound(BeerNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
     @ExceptionHandler(DuplicateEanException.class)
     public ResponseEntity<Map<String, Object>> handleDuplicateEanException(DuplicateEanException ex) {
         Map<String, Object> response = new HashMap<>();

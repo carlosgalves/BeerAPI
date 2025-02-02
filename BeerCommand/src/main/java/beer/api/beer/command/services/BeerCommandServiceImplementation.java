@@ -5,6 +5,7 @@ import beer.api.beer.command.dto.CreateBeerRequest;
 import beer.api.beer.command.events.BeerCreatedEvent;
 import beer.api.beer.command.events.BeerDeletedEvent;
 import beer.api.beer.command.events.BeerUpdatedEvent;
+import beer.api.beer.command.exceptions.BeerNotFoundException;
 import beer.api.beer.command.exceptions.DuplicateEanException;
 import beer.api.beer.command.model.Beer;
 import beer.api.beer.command.repositories.BeerRepository;
@@ -89,7 +90,7 @@ public class BeerCommandServiceImplementation implements BeerCommandService {
     @Override
     public void patchBeer(UUID id, Map<String, Object> updates) {
         Beer beer = beerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Beer not found"));
+                .orElseThrow(() -> new BeerNotFoundException(id));
 
         BeerUpdatedEvent.BeerUpdatedEventBuilder eventBuilder = BeerUpdatedEvent.builder()
                         .id(String.valueOf(id));
@@ -157,7 +158,7 @@ public class BeerCommandServiceImplementation implements BeerCommandService {
     @Override
     public void deleteBeer(UUID id) {
         beerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Beer not found"));
+                .orElseThrow(() -> new BeerNotFoundException(id));
 
         beerRepository.deleteById(id);
         log.info("Deleted beer with id: {}", id);
