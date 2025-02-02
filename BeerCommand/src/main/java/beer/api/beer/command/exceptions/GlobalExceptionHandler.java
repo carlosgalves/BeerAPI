@@ -27,4 +27,17 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest().body(response);
     }
+
+    @ExceptionHandler(DuplicateEanException.class)
+    public ResponseEntity<Map<String, Object>> handleDuplicateEanException(DuplicateEanException ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", HttpStatus.BAD_REQUEST.value());
+        response.put("error", "Bad Request");
+        response.put("message", "Duplicate EAN");
+        Map<String, String> errors = new HashMap<>();
+        errors.put("ean", ex.getMessage());
+        response.put("errors", errors);
+
+        return ResponseEntity.badRequest().body(response);
+    }
 }

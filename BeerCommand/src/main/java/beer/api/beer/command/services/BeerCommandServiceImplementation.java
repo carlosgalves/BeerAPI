@@ -5,6 +5,7 @@ import beer.api.beer.command.dto.CreateBeerRequest;
 import beer.api.beer.command.events.BeerCreatedEvent;
 import beer.api.beer.command.events.BeerDeletedEvent;
 import beer.api.beer.command.events.BeerUpdatedEvent;
+import beer.api.beer.command.exceptions.DuplicateEanException;
 import beer.api.beer.command.model.Beer;
 import beer.api.beer.command.repositories.BeerRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -56,6 +57,10 @@ public class BeerCommandServiceImplementation implements BeerCommandService {
         beer.setAromaRating(0f);
         beer.setTasteRating(0f);
         beer.setAfterTasteRating(0f);
+
+        if (beerRepository.existsByEan(request.getEan())) {
+            throw new DuplicateEanException("EAN already exists");
+        }
 
         beerRepository.save(beer);
         log.info("Beer created: {}", beer);
