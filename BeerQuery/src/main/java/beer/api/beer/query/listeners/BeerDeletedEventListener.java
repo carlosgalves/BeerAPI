@@ -10,6 +10,8 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 @Slf4j
 public class BeerDeletedEventListener {
@@ -36,7 +38,7 @@ public class BeerDeletedEventListener {
 
             log.info("Received event {}", event);
 
-            beerRepository.deleteById(String.valueOf(event.getBeerId()));
+            beerRepository.deleteById(event.getBeerId());
             log.info("Beer deleted from query database: {}", event.getBeerId());
         } catch (Exception e) {
             log.error("Error processing beer delete event: {}", e.getMessage(), e);

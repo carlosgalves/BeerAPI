@@ -3,10 +3,11 @@ package beer.api.beer.query.services;
 
 import beer.api.beer.query.model.Beer;
 import beer.api.beer.query.repositories.BeerRepository;
+import beer.api.beer.query.exceptions.BeerNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class BeerQueryService {
@@ -22,7 +23,7 @@ public class BeerQueryService {
     }
 
     public Beer getBeerById(String id) {
-        Optional<Beer> beer = beerRepository.findById(id);
-        return beer.orElseThrow(() -> new RuntimeException("Beer not found"));
+        return beerRepository.findById(UUID.fromString(id))
+                .orElseThrow(() -> new BeerNotFoundException(UUID.fromString(id)));
     }
 }

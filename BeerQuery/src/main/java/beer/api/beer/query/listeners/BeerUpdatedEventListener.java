@@ -12,6 +12,7 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 @Slf4j
@@ -38,7 +39,7 @@ public class BeerUpdatedEventListener {
 
             log.info("Received event: {}", event);
 
-            Beer beer = beerRepository.findById(event.getId())
+            Beer beer = beerRepository.findById(UUID.fromString(event.getId()))
                     .orElseThrow(() -> new RuntimeException("Beer not found"));
 
             if (event.getName() != null && !event.getName().isEmpty()) {
