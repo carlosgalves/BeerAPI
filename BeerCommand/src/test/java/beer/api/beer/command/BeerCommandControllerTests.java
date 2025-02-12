@@ -102,7 +102,8 @@ public class BeerCommandControllerTests {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value("Bad Request"))
                 .andExpect(jsonPath("$.message").value("Invalid parameters"))
-                .andExpect(jsonPath("$.errors.name").value("Name cannot be blank"));
+                .andExpect(jsonPath("$.details[0].field").value("name"))
+                .andExpect(jsonPath("$.details[0].message").value("Name cannot be blank"));
 
         verify(beerCommandService, never()).createBeer(any(CreateBeerRequest.class));
     }
@@ -118,8 +119,8 @@ public class BeerCommandControllerTests {
                         .content(objectMapper.writeValueAsString(createBeerRequest)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value("Bad Request"))
-                .andExpect(jsonPath("$.message").value("Invalid parameters"))
-                .andExpect(jsonPath("$.errors.brewery").value("Brewery cannot be blank"));
+                .andExpect(jsonPath("$.details[0].field").value("brewery"))
+                .andExpect(jsonPath("$.details[0].message").value("Brewery cannot be blank"));
 
         verify(beerCommandService, never()).createBeer(any(CreateBeerRequest.class));
     }
@@ -135,8 +136,8 @@ public class BeerCommandControllerTests {
                         .content(objectMapper.writeValueAsString(createBeerRequest)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value("Bad Request"))
-                .andExpect(jsonPath("$.message").value("Invalid parameters"))
-                .andExpect(jsonPath("$.errors.type").value("Type cannot be blank"));
+                .andExpect(jsonPath("$.details[0].field").value("type"))
+                .andExpect(jsonPath("$.details[0].message").value("Type cannot be blank"));
 
         verify(beerCommandService, never()).createBeer(any(CreateBeerRequest.class));
     }
@@ -150,8 +151,8 @@ public class BeerCommandControllerTests {
                         .content(objectMapper.writeValueAsString(createBeerRequest)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value("Bad Request"))
-                .andExpect(jsonPath("$.message").value("Invalid parameters"))
-                .andExpect(jsonPath("$.errors.description").value("Description cannot exceed 100 characters"));
+                .andExpect(jsonPath("$.details[0].field").value("description"))
+                .andExpect(jsonPath("$.details[0].message").value("Description cannot exceed 100 characters"));
 
         verify(beerCommandService, never()).createBeer(any(CreateBeerRequest.class));
     }
@@ -167,7 +168,8 @@ public class BeerCommandControllerTests {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value("Bad Request"))
                 .andExpect(jsonPath("$.message").value("Invalid parameters"))
-                .andExpect(jsonPath("$.errors.abv").value("ABV cannot be lower than 0"));
+                .andExpect(jsonPath("$.details[0].field").value("abv"))
+                .andExpect(jsonPath("$.details[0].message").value("ABV cannot be lower than 0"));
 
         verify(beerCommandService, never()).createBeer(any(CreateBeerRequest.class));
     }
@@ -185,7 +187,8 @@ public class BeerCommandControllerTests {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value("Bad Request"))
                 .andExpect(jsonPath("$.message").value("Invalid parameters"))
-                .andExpect(jsonPath("$.errors.countryIso").value("Country ISO must consist of exactly two letters according to ISO-3166"));
+                .andExpect(jsonPath("$.details[0].field").value("countryIso"))
+                .andExpect(jsonPath("$.details[0].message").value("Country ISO must consist of exactly two letters according to ISO-3166"));
 
         verify(beerCommandService, never()).createBeer(any(CreateBeerRequest.class));
     }
@@ -205,7 +208,8 @@ public class BeerCommandControllerTests {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value("Bad Request"))
                 .andExpect(jsonPath("$.message").value("Invalid parameters"))
-                .andExpect(jsonPath("$.errors.ean").value("EAN cannot be blank"));
+                .andExpect(jsonPath("$.details[0].field").value("ean"))
+                .andExpect(jsonPath("$.details[0].message").value("EAN cannot be blank"));
 
         verify(beerCommandService, never()).createBeer(any(CreateBeerRequest.class));
     }
@@ -220,9 +224,8 @@ public class BeerCommandControllerTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createBeerRequest)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value("Bad Request"))
-                .andExpect(jsonPath("$.message").value("Duplicate EAN"))
-                .andExpect(jsonPath("$.errors.ean").value("EAN already exists"));
+                .andExpect(jsonPath("$.error").value("Duplicate EAN"))
+                .andExpect(jsonPath("$.message").value("EAN already exists"));
 
         verify(beerCommandService, times(1)).createBeer(any(CreateBeerRequest.class));
     }
@@ -253,7 +256,8 @@ public class BeerCommandControllerTests {
                         .contentType("application/json")
                         .content("{\"name\":\"Non-existent IPA\", \"abv\": 6.0}"))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string("Couldn't find beer with ID: " + beerId));
+                .andExpect(jsonPath("$.error").value("Beer not found"))
+                .andExpect(jsonPath("$.message").value("Couldn't find beer with ID: " + beerId));
 
         verify(beerCommandService, times(1)).patchBeer(eq(beerId), any(Map.class));
     }
@@ -277,7 +281,8 @@ public class BeerCommandControllerTests {
 
         mockMvc.perform(delete("/beers/{id}", beerId))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string("Couldn't find beer with ID: " + beerId));
+                .andExpect(jsonPath("$.error").value("Beer not found"))
+                .andExpect(jsonPath("$.message").value("Couldn't find beer with ID: " + beerId));
 
         verify(beerCommandService, times(1)).deleteBeer(eq(beerId));
     }

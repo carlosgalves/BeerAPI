@@ -1,6 +1,7 @@
 package beer.api.beer.query;
 
 import beer.api.beer.query.controllers.BeerQueryController;
+import beer.api.beer.query.exceptions.BeerNotFoundException;
 import beer.api.beer.query.model.Beer;
 import beer.api.beer.query.services.BeerQueryService;
 import org.junit.jupiter.api.BeforeEach;
@@ -112,11 +113,12 @@ public class BeerQueryControllerTests {
     @Test
     void getBeerById_NotFound() throws Exception {
         String beerId = "1a2b3c4d-aaaa-bbbb-0000-000abc000cba";
-        when(beerQueryService.getBeerById(beerId)).thenThrow(new RuntimeException("Beer not found"));
+        when(beerQueryService.getBeerById(beerId)).thenThrow(new BeerNotFoundException(UUID.fromString(beerId)));
 
         mockMvc.perform(get("/beers/{id}", beerId))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string("Beer not found"));
+                .andExpect(jsonPath("$.error").value("Beer not found"))
+                .andExpect(jsonPath("$.message").value("Couldn't find beer with ID: " + beerId));
 
         verify(beerQueryService, times(1)).getBeerById(beerId);
     }
