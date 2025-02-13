@@ -1,7 +1,7 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/java-postgres
 {
-	"name": "Java & PostgreSQL",
+	"name": "BeerAPI",
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "app",
 	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
@@ -12,7 +12,7 @@
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// This can be used to network with other containers or with the host.
 	// "forwardPorts": [5432],
-    "forwardPorts": [8080, 8081],
+    "forwardPorts": [8080, 8081, 5432, 9092],
 
 
   // Use 'postCreateCommand' to run commands after the container is created.
