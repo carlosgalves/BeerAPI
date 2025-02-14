@@ -35,15 +35,6 @@ public class KafkaConsumerConfig {
     @Value("${spring.kafka.trusted.packages}")
     private String trustedPackages;
 
-    @Value("${spring.kafka.event.key.beer.created}")
-    private String BEER_CREATED_KEY;
-
-    @Value("${spring.kafka.event.key.beer.updated}")
-    private String BEER_UPDATED_KEY;
-
-    @Value("${spring.kafka.event.key.beer.deleted}")
-    private String BEER_DELETED_KEY;
-
     @Bean
     public Map<String, Object> consumerConfig() {
         Map<String, Object> props = new HashMap<>();
@@ -63,50 +54,20 @@ public class KafkaConsumerConfig {
         return new DefaultKafkaConsumerFactory<>(consumerConfig());
     }
 
-    private ConcurrentKafkaListenerContainerFactory<String, Object> createFilteredFactory(String eventKey) {
+    /*@Bean
+    public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
-        factory.setRecordFilterStrategy(record -> !eventKey.equals(record.key()));
-        return factory;
-    }
-
-    @Bean(name = "beerCreatedListenerFactory")
-    public ConcurrentKafkaListenerContainerFactory<String, Object> beerCreatedListenerFactory() {
-        return createFilteredFactory(BEER_CREATED_KEY);
-    }
-
-    @Bean(name = "beerUpdatedListenerFactory")
-    public ConcurrentKafkaListenerContainerFactory<String, Object> beerUpdatedListenerFactory() {
-        return createFilteredFactory(BEER_UPDATED_KEY);
-    }
-
-    @Bean(name = "beerDeletedListenerFactory")
-    public ConcurrentKafkaListenerContainerFactory<String, Object> beerDeletedListenerFactory() {
-        return createFilteredFactory(BEER_DELETED_KEY);
-    }
-
-    /*@Bean(name = "beerCreatedListenerFactory")
-    public ConcurrentKafkaListenerContainerFactory<String, Object> beerCreatedListenerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory());
-        factory.setRecordFilterStrategy(record -> !BEER_CREATED_KEY.equals(record.key()));
         return factory;
     }*/
 
-    /*@Bean(name = "beerUpdatedListenerFactory")
-    public ConcurrentKafkaListenerContainerFactory<String, Object> beerUpdatedListenerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory());
-        factory.setRecordFilterStrategy(record -> !BEER_UPDATED_KEY.equals(record.key()));
+    @Bean(name = "kafkaListenerContainerFactory")
+    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, Object>> factory(
+            ConsumerFactory<String, Object> consumerFactory
+    ) {
+        ConcurrentKafkaListenerContainerFactory<String, Object> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactory);
         return factory;
     }
-
-    @Bean(name = "beerDeletedListenerFactory")
-    public ConcurrentKafkaListenerContainerFactory<String, Object> beerDeletedListenerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory());
-        factory.setRecordFilterStrategy(record -> !BEER_DELETED_KEY.equals(record.key()));
-        return factory;
-    }*/
-
 }
